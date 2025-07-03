@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>炫酷Git入门教程</title>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/github-dark.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/lib/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --primary: #6C63FF;
+            --secondary: #4F46E5;
+            --accent: #10B981;
+            --dark: #0F172A;
+            --darker: #0B1120;
+            --light: #F9FAFB;
+            --neon: #00D1FF;
+            --neon-pink: #FF00C8;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--darker), #1E293B);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+        
+        /* 粒子背景 */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        /* 波浪效果 */
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            z-index: -1;
+        }
+        
+        .wave-container svg {
+            position: relative;
+            display: block;
+            width: calc(100% + 1.3px);
+            height: 150px;
+        }
+        
+        .wave-container .shape-fill {
+            fill: rgba(108, 99, 255, 0.15);
+        }
+        
+        /* 玻璃拟态效果 */
+        .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 12px 40px rgba(108, 99, 255, 0.3);
+            border-color: rgba(108, 99, 255, 0.3);
+        }
+        
+        /* 霓虹文字效果 */
+        .neon-text {
+            text-shadow: 0 0 10px rgba(0, 209, 255, 0.7), 
+                         0 0 20px rgba(0, 209, 255, 0.5),
+                         0 0 30px rgba(0, 209, 255, 0.3);
+        }
+        
+        .neon-pink {
+            text-shadow: 0 0 10px rgba(255, 0, 200, 0.7), 
+                         0 0 20px rgba(255, 0, 200, 0.5),
+                         0 0 30px rgba(255, 0, 200, 0.3);
+        }
+        
+        /* 命令块样式 */
+        .command-block {
+            position: relative;
+            margin-bottom: 1.5rem;
+            border-radius: 12px;
+            overflow: hidden;
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .command-block:hover {
+            border-color: var(--neon);
+            box-shadow: 0 0 20px rgba(0, 209, 255, 0.2);
+        }
+        
+        .command-description {
+            padding: 1rem 1.25rem;
+            background: rgba(108, 99, 255, 0.2);
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(108, 99, 255, 0.3);
+        }
+        
+        .command-code {
+            padding: 1.5rem 1.25rem;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* 复制按钮 */
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(108, 99, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid rgba(108, 99, 255, 0.3);
+        }
+        
+        .copy-btn:hover {
+            background: rgba(108, 99, 255, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+        
+        /* 导航栏 */
+        #navbar {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* 动画效果 */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .fade-in.appear {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .hero-title {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* 新增：命令图标动画 */
+        .command-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .command-group:hover .command-icon {
+            transform: scale(1.2);
+            filter: drop-shadow(0 0 8px rgba(108, 99, 255, 0.7));
+        }
+        
+        /* 新增：进度指示器 */
+        .progress-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            z-index: 100;
+        }
+        
+        /* 新增：发光按钮 */
+        .glow-button {
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .glow-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+            z-index: -1;
+        }
+        
+        .glow-button:hover::before {
+            left: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- 进度指示器 -->
+    <div class="progress-indicator" id="progress-bar"></div>
+    
+    <!-- 粒子背景 -->
+    <div id="particles-js"></div>
+    
+    <!-- 波浪效果 -->
+    <div class="wave-container">
+        <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path>
+            <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path>
+            <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path>
+        </svg>
+    </div>
+
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-500 py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <a href="#" class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center shadow-lg">
+                    <i class="fa fa-git text-white text-xl"></i>
+                </div>
+                <span class="font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">GitMaster</span>
+            </a>
+            <nav class="hidden md:flex space-x-8">
+                <a href="#basic-concepts" class="text-gray-300 hover:text-white transition-colors font-medium glow-button px-3 py-1 rounded-lg">基础概念</a>
+                <a href="#installation-configuration" class="text-gray-300 hover:text-white transition-colors font-medium glow-button px-3 py-1 rounded-lg">安装配置</a>
+                <a href="#common-commands" class="text-gray-300 hover:text-white transition-colors font-medium glow-button px-3 py-1 rounded-lg">常用命令</a>
+                <a href="#branch-management" class="text-gray-300 hover:text-white transition-colors font-medium glow-button px-3 py-1 rounded-lg">分支管理</a>
+                <a href="#remote-repository" class="text-gray-300 hover:text-white transition-colors font-medium glow-button px-3 py-1 rounded-lg">远程仓库</a>
+            </nav>
+            <button id="menu-toggle" class="md:hidden text-gray-300 focus:outline-none">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="pt-32 pb-20 relative">
+        <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
+            <div class="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-purple-500 opacity-20 blur-3xl animate-pulse"></div>
+            <div class="absolute top-1/3 right-1/4 w-80 h-80 rounded-full bg-indigo-500 opacity-20 blur-3xl animate-pulse"></div>
+            <div class="absolute bottom-1/4 left-1/2 w-96 h-96 rounded-full bg-blue-500 opacity-15 blur-3xl animate-pulse animation-delay-2000"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 text-center relative z-10">
+            <div class="inline-block p-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-700 mb-6">
+                <div class="bg-gray-900 rounded-full px-4 py-1 text-sm text-gray-300">
+                    <i class="fa fa-star mr-2 text-yellow-400"></i> 不知道谁瞎做的Git教程
+                </div>
+            </div>
+            
+            <h1 class="hero-title text-5xl md:text-7xl font-extrabold mb-6 neon-text">
+                掌握 <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400">Git</span> 艺术
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto mb-10">
+                从零开始成为版本控制大师，解锁高效开发工作流
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4 mb-16">
+                <a href="#basic-concepts" class="px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium transform hover:-translate-y-1 glow-button">
+                    <i class="fa fa-rocket mr-2"></i>开始学习 
+                </a>
+                <a href="#common-commands" class="px-8 py-4 bg-transparent text-white border-2 border-purple-500 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 font-medium transform hover:-translate-y-1 hover:bg-purple-500/10 glow-button">
+                    <i class="fa fa-terminal mr-2"></i>查看命令 
+                </a>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 text-gray-300">
+                <div class="flex items-center fade-in">
+                    <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mr-2 animate-pulse">
+                        <i class="fa fa-check text-purple-400"></i>
+                    </div>
+                    <span>完全免费</span>
+                </div>
+                <div class="flex items-center fade-in">
+                    <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mr-2 animate-pulse animation-delay-500">
+                        <i class="fa fa-bolt text-blue-400"></i>
+                    </div>
+                    <span>高效学习</span>
+                </div>
+                <div class="flex items-center fade-in">
+                    <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mr-2 animate-pulse animation-delay-1000">
+                        <i class="fa fa-laptop-code text-green-400"></i>
+                    </div>
+                    <span>实战示例</span>
+                </div>
+                <div class="flex items-center fade-in">
+                    <div class="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center mr-2 animate-pulse animation-delay-1500">
+                        <i class="fa fa-graduation-cap text-yellow-400"></i>
+                    </div>
+                    <span>完整教程</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 pb-32 relative z-10">
+        <!-- 一、Git 基础概念 -->
+        <section id="basic-concepts" class="mb-24 scroll-mt-24">
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold mb-8 flex items-center">
+                    <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mr-4 shadow-lg">
+                        <span class="text-white text-xl font-bold">1</span>
+                    </span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">Git 核心概念</span>
+                </h2>
+                <div class="grid md:grid-cols-5 gap-8">
+                    <div class="md:col-span-2 flex flex-col justify-center fade-in">
+                        <div class="bg-gradient-to-br from-purple-600/30 to-indigo-700/30 p-8 rounded-xl text-center border border-purple-500/30 shadow-lg">
+                            <div class="floating mb-6">
+                                <div class="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mx-auto">
+                                    <i class="fa fa-git text-4xl text-white"></i>
+                                </div>
+                            </div>
+                            <h3 class="font-bold text-2xl mb-2 text-white">代码时光机</h3>
+                            <p class="text-gray-300">记录每一次改变</p>
+                        </div>
+                    </div>
+                    <div class="md:col-span-3 fade-in">
+                        <p class="text-gray-300 mb-6 text-lg">
+                            <strong class="text-purple-400">Git</strong> 是现代软件开发的核心工具，它就像代码的"时光机"，能记住你每次的代码修改。当你需要时，可以随时回到之前的版本。
+                        </p>
+                        <p class="text-gray-300 mb-8 text-lg">
+                            简单说：Git能帮你记录代码的每一次变化，防止代码丢失，还能让多人协作写代码变得轻松。
+                        </p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-gradient-to-br from-purple-600/20 to-indigo-700/20 p-5 rounded-xl border border-purple-500/20 shadow-md">
+                                <h4 class="font-bold text-purple-400 mb-3 flex items-center">
+                                    <i class="fa fa-star mr-2"></i>Git 超能力
+                                </h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                        <span>多人协作不冲突</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                        <span>离线也能工作</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                        <span>完整修改历史</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-check-circle text-green-400 mt-1 mr-2"></i>
+                                        <span>强大的分支功能</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-gradient-to-br from-purple-600/20 to-indigo-700/20 p-5 rounded-xl border border-purple-500/20 shadow-md">
+                                <h4 class="font-bold text-purple-400 mb-3 flex items-center">
+                                    <i class="fa fa-cube mr-2"></i>核心概念
+                                </h4>
+                                <ul class="space-y-3">
+                                    <li class="flex items-start">
+                                        <i class="fa fa-database text-blue-400 mt-1 mr-2"></i>
+                                        <span>仓库：代码的家</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-save text-green-400 mt-1 mr-2"></i>
+                                        <span>提交：保存一次修改</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-code-fork text-yellow-400 mt-1 mr-2"></i>
+                                        <span>分支：代码的平行宇宙</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fa fa-merge text-pink-400 mt-1 mr-2"></i>
+                                        <span>合并：整合不同分支</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 二、Git 安装与配置 -->
+        <section id="installation-configuration" class="mb-24 scroll-mt-24">
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold mb-8 flex items-center">
+                    <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mr-4 shadow-lg">
+                        <span class="text-white text-xl font-bold">2</span>
+                    </span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">安装与配置</span>
+                </h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="fade-in">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center text-white">
+                            <i class="fa fa-download text-purple-400 mr-3 command-icon"></i>
+                            下载安装 Git
+                        </h3>
+                        <p class="text-gray-300 mb-6">访问 Git 官网下载对应操作系统的安装包：</p>
+                        
+                        <div class="command-block fade-in">
+                            <div class="command-description text-gray-300">Windows 下载地址</div>
+                            <div class="command-code text-white">
+                                <pre><code class="language-bash">https://git-scm.com/download/win</code></pre>
+                            </div>
+                            <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                        </div>
+                        
+                        <div class="command-block fade-in">
+                            <div class="command-description text-gray-300">macOS 下载地址</div>
+                            <div class="command-code text-white">
+                                <pre><code class="language-bash">https://git-scm.com/download/mac</code></pre>
+                            </div>
+                            <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                        </div>
+                        
+                        <div class="command-block fade-in">
+                            <div class="command-description text-gray-300">Linux (Ubuntu/Debian)</div>
+                            <div class="command-code text-white">
+                                <pre><code class="language-bash">sudo apt-get install git</code></pre>
+                            </div>
+                            <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                        </div>
+                        
+                        <div class="mt-6 p-5 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 shadow-md">
+                            <p class="text-gray-300">
+                                <strong class="text-purple-400">安装提示：</strong> Windows安装时，勾选"Add Git to PATH"选项（这样可以在任何地方使用Git命令）。
+                            </p>
+                        </div>
+                    </div>
+                    <div class="fade-in">
+                        <h3 class="text-2xl font-bold mb-6 flex items-center text-white">
+                            <i class="fa fa-cog text-blue-400 mr-3 command-icon"></i>
+                            初始配置
+                        </h3>
+                        <p class="text-gray-300 mb-6">安装完成后，需要告诉Git你是谁：</p>
+                        
+                        <div class="command-block">
+                            <div class="command-description text-gray-300">设置你的名字</div>
+                            <div class="command-code text-white">
+                                <pre><code class="language-bash">git config --global user.name "你的名字"</code></pre>
+                            </div>
+                            <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                        </div>
+                        
+                        <div class="command-block">
+                            <div class="command-description text-gray-300">设置你的邮箱</div>
+                            <div class="command-code text-white">
+                                <pre><code class="language-bash">git config --global user.email "你的邮箱@example.com"</code></pre>
+                            </div>
+                            <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                        </div>
+                        
+                        <div class="command-block">
+                            <div class="command-description text-gray-300">查看配置信息</div>
+                            <div class="command-code text-white">
+                                <pre><code class="language-bash">git config -l</code></pre>
+                            </div>
+                            <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                        </div>
+                        
+                        <div class="mt-6 p-5 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 shadow-md">
+                            <p class="text-gray-300">
+                                <strong class="text-green-400">重要：</strong> 名字和邮箱要真实，这样别人才能知道是谁修改了代码。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 三、常用 Git 命令 -->
+        <section id="common-commands" class="mb-24 scroll-mt-24">
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold mb-8 flex items-center">
+                    <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mr-4 shadow-lg">
+                        <span class="text-white text-xl font-bold">3</span>
+                    </span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">核心命令</span>
+                </h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="fade-in">
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 mb-8 shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-folder-open text-yellow-400 mr-3 command-icon"></i>
+                                仓库操作
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">初始化新仓库</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git init</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">克隆远程仓库</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git clone https://github.com/用户名/仓库名.git</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-history text-blue-400 mr-3 command-icon"></i>
+                                查看与比较
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">查看仓库状态</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git status</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">查看提交历史</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git log --oneline</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">查看文件差异</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git diff 文件名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="fade-in">
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 mb-8 shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-file-text text-green-400 mr-3 command-icon"></i>
+                                提交修改
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">添加单个文件</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git add 文件名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">添加所有文件</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git add .</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">提交修改</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git commit -m "修改说明"</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-undo text-red-400 mr-3 command-icon"></i>
+                                撤销操作
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">撤销文件修改</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git checkout -- 文件名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">撤销暂存文件</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git reset HEAD 文件名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">修改上次提交</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git commit --amend -m "新说明"</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 四、分支管理 -->
+        <section id="branch-management" class="mb-24 scroll-mt-24">
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold mb-8 flex items-center">
+                    <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mr-4 shadow-lg">
+                        <span class="text-white text-xl font-bold">4</span>
+                    </span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">分支管理</span>
+                </h2>
+                
+                <div class="mb-10">
+                    <p class="text-gray-300 mb-8 text-lg">
+                        分支就像代码的"平行宇宙"，你可以在新分支上修改代码，不会影响主分支。改好后可以合并回主分支。
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 fade-in shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-plus-circle text-yellow-400 mr-3 command-icon"></i>
+                                创建与切换
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">创建新分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git branch 新分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">切换分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git checkout 分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">创建并切换</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git checkout -b 新分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 fade-in shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-code-fork text-green-400 mr-3 command-icon"></i>
+                                合并操作
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">合并分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git merge 分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">变基操作</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git rebase 目标分支</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">解决冲突后继续变基</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git rebase --continue</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 fade-in shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-trash text-red-400 mr-3 command-icon"></i>
+                                删除分支
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">删除已合并分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git branch -d 分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">强制删除分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git branch -D 分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">删除远程分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git push origin --delete 分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 五、远程仓库操作 -->
+        <section id="remote-repository" class="mb-24 scroll-mt-24">
+            <div class="glass-card p-8">
+                <h2 class="text-3xl font-bold mb-8 flex items-center">
+                    <span class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mr-4 shadow-lg">
+                        <span class="text-white text-xl font-bold">5</span>
+                    </span>
+                    <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">远程协作</span>
+                </h2>
+                
+                <div class="mb-10">
+                    <p class="text-gray-300 mb-8 text-lg">
+                        远程仓库就像代码的"网盘"，可以把代码存到网上（如GitHub），方便团队共享和备份。
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 fade-in shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-cloud-upload text-blue-400 mr-3 command-icon"></i>
+                                上传代码
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">添加远程仓库</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git remote add origin 仓库地址</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">第一次推送</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git push -u origin main</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">后续推送</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git push</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 fade-in shadow-md">
+                            <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                                <i class="fa fa-cloud-download text-green-400 mr-3 command-icon"></i>
+                                下载代码
+                            </h3>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">获取最新代码</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git fetch</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">拉取并合并</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git pull</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                            
+                            <div class="command-block">
+                                <div class="command-description text-gray-300">拉取特定分支</div>
+                                <div class="command-code text-white">
+                                    <pre><code class="language-bash">git pull origin 分支名</code></pre>
+                                </div>
+                                <button class="copy-btn"><i class="fa fa-copy"></i> 复制</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 rounded-xl bg-gradient-to-br from-purple-600/20 to-indigo-700/20 border border-purple-500/30 shadow-md">
+                        <h3 class="text-xl font-bold mb-6 flex items-center text-white">
+                            <i class="fa fa-users text-yellow-400 mr-3"></i>
+                            团队协作流程
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center p-4">
+                                <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                                    <i class="fa fa-code-branch text-2xl text-purple-400"></i>
+                                </div>
+                                <h4 class="font-bold text-lg mb-2">创建分支</h4>
+                                <p class="text-gray-300 text-sm">为每个新功能创建独立分支</p>
+                            </div>
+                            <div class="text-center p-4">
+                                <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                                    <i class="fa fa-code text-2xl text-blue-400"></i>
+                                </div>
+                                <h4 class="font-bold text-lg mb-2">开发提交</h4>
+                                <p class="text-gray-300 text-sm">在分支上开发并提交代码</p>
+                            </div>
+                            <div class="text-center p-4">
+                                <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mx-auto mb-4">
+                                    <i class="fa fa-merge text-2xl text-green-400"></i>
+                                </div>
+                                <h4 class="font-bold text-lg mb-2">合并请求</h4>
+                                <p class="text-gray-300 text-sm">创建合并请求到主分支</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="py-16 relative z-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+                <div>
+                    <h3 class="text-xl font-bold mb-6 flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-600 to-indigo-700 flex items-center justify-center mr-3 shadow-lg">
+                            <i class="fa fa-git text-white"></i>
+                        </div>
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-300">GitMaster</span>
+                    </h3>
+                    <p class="text-gray-400 mb-6">
+                        从零开始学习Git，掌握代码管理核心技能
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://github.com/Buds-2025" target="_blank" class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-gray-300 hover:text-white hover:bg-purple-500/40 transition-all shadow-md">
+                            <i class="fa fa-github"></i>
+                        </a>
+                        <a href="https://space.bilibili.com/17397321#!/" target="_blank" class="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center text-gray-300 hover:text-white hover:bg-purple-500/40 transition-all shadow-md">
+                            <i class="fa fa-play-circle"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-white">快速导航</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#basic-concepts" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center glow-button px-3 py-1 rounded-lg"><i class="fa fa-chevron-right mr-2 text-xs"></i>基础概念</a></li>
+                        <li><a href="#installation-configuration" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center glow-button px-3 py-1 rounded-lg"><i class="fa fa-chevron-right mr-2 text-xs"></i>安装配置</a></li>
+                        <li><a href="#common-commands" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center glow-button px-3 py-1 rounded-lg"><i class="fa fa-chevron-right mr-2 text-xs"></i>常用命令</a></li>
+                        <li><a href="#branch-management" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center glow-button px-3 py-1 rounded-lg"><i class="fa fa-chevron-right mr-2 text-xs"></i>分支管理</a></li>
+                        <li><a href="#remote-repository" class="text-gray-400 hover:text-purple-400 transition-colors flex items-center glow-button px-3 py-1 rounded-lg"><i class="fa fa-chevron-right mr-2 text-xs"></i>远程仓库</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-6 text-white">联系我们</h3>
+                    <ul class="space-y-4">
+                        <li class="flex items-start">
+                            <i class="fa fa-envelope text-purple-400 mt-1 mr-3"></i>
+                            <a href="mailto:buds1lk@qq.com" class="text-gray-400 hover:text-purple-400 transition-colors">buds1lk@qq.com</a>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-phone text-blue-400 mt-1 mr-3"></i>
+                            <span class="text-gray-400">17612738545</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-map-marker text-green-400 mt-1 mr-3"></i>
+                            <span class="text-gray-400">湖北省武汉市光谷大道现代·世贸中心</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-800 pt-8 text-center text-gray-500">
+                <p>&copy; 2025 GitMaster 零基础Git教程. 保留所有权利.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 初始化粒子背景
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: "#6C63FF" },
+                shape: { type: "circle" },
+                opacity: { value: 0.3, random: true },
+                size: { value: 3, random: true },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#6C63FF",
+                    opacity: 0.1,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 1,
+                    direction: "none",
+                    random: true,
+                    straight: false,
+                    out_mode: "out",
+                    bounce: false
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: { enable: true, mode: "grab" },
+                    onclick: { enable: true, mode: "push" },
+                    resize: true
+                },
+                modes: {
+                    grab: { distance: 140, line_linked: { opacity: 0.3 } },
+                    push: { particles_nb: 4 }
+                }
+            },
+            retina_detect: true
+        });
+        
+        // 导航栏滚动效果
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-3', 'shadow-xl');
+                navbar.classList.remove('py-4');
+            } else {
+                navbar.classList.add('py-4');
+                navbar.classList.remove('py-3', 'shadow-xl');
+            }
+        });
+        
+        // 移动端菜单切换
+        const menuToggle = document.getElementById('menu-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuToggle.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 100,
+                        behavior: 'smooth'
+                    });
+                    
+                    // 关闭移动端菜单
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+        
+        // 代码高亮
+        document.addEventListener('DOMContentLoaded', () => {
+            hljs.highlightAll();
+        });
+        
+        // 滚动动画
+        const fadeElements = document.querySelectorAll('.fade-in');
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('appear');
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        fadeElements.forEach(element => {
+            observer.observe(element);
+        });
+        
+        // 复制功能
+        document.querySelectorAll('.copy-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const commandBlock = this.closest('.command-block');
+                const codeElement = commandBlock.querySelector('code');
+                const codeText = codeElement.innerText;
+                
+                navigator.clipboard.writeText(codeText).then(() => {
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '<i class="fa fa-check"></i> 已复制';
+                    this.classList.add('copied');
+                    
+                    setTimeout(() => {
+                        this.innerHTML = originalText;
+                        this.classList.remove('copied');
+                    }, 2000);
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    this.innerHTML = '<i class="fa fa-times"></i> 失败';
+                    
+                    setTimeout(() => {
+                        this.innerHTML = '<i class="fa fa-copy"></i> 复制';
+                    }, 2000);
+                });
+            });
+        });
+        
+        // 进度条效果
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById("progress-bar").style.width = scrolled + "%";
+        });
+        
+        // 命令图标悬停效果
+        const commandIcons = document.querySelectorAll('.command-icon');
+        commandIcons.forEach(icon => {
+            icon.addEventListener('mouseenter', () => {
+                icon.style.transition = 'all 0.3s ease';
+            });
+        });
+    </script>
+</body>
+</html>
